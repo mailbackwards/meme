@@ -17,6 +17,7 @@ MEME.SVG = ( function ( $ ) {
   var canvas       = document.getElementById( 'canvas' ),
       canvasHeight = 378,
       canvasWidth  = 755,
+      textMaxWidth = canvasWidth - 200,
       deviceWidth  = window.innerWidth,
       context      = canvas.getContext( '2d' ),
       download     = document.getElementById( 'download' ),
@@ -94,7 +95,7 @@ MEME.SVG = ( function ( $ ) {
       var testLine  = line + words[n] + ' ',
           metrics   = context.measureText( testLine ),
           testWidth = metrics.width;
-      if ( testWidth > maxWidth && n > 0 ) {
+      if ( testWidth > (maxWidth - x) && n > 0 ) {
         context.fillText( line, x, y );
         line = words[n] + ' ';
         y += lineHeight;
@@ -183,9 +184,10 @@ MEME.SVG = ( function ( $ ) {
   var addHeadline = function () {
     // Create our own canvas values
     var text = $( '#headline' ).val(),
-        maxWidth = 550,
-        x = 45,
-        y = 45;
+        maxWidth = textMaxWidth,
+        coords = getTextCoords(),
+        x = coords[0],
+        y = coords[1];
     context.font = fontSize
     context.textAlign = 'left';
     context.fillStyle = 'white';
@@ -255,6 +257,16 @@ MEME.SVG = ( function ( $ ) {
   var handleAlignment = function () {
     alignment = $( '#alignment option:selected' ).val();
     addCanvas();
+  }
+
+  /**
+   * Determines the start coordinates of the caption text
+   */
+  var getTextCoords = function () {
+    var xCoord = $( '#slider' ).val(),
+        x = (xCoord / 5) * textMaxWidth,
+        y = 45;
+    return [x, y]
   }
 
   /**
@@ -339,6 +351,9 @@ MEME.SVG = ( function ( $ ) {
 
     var scale = document.getElementById('scale');
     scale.addEventListener( 'change', addCanvas, false );
+
+    var slider = document.getElementById('slider');
+    slider.addEventListener( 'change', addCanvas, false );
 
     var shadow = document.getElementById( 'shadow' );
     shadow.addEventListener( 'change', addCanvas, false );
