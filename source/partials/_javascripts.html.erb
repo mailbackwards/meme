@@ -222,10 +222,15 @@ MEME.SVG = ( function ( $ ) {
     var text = $( '#credit' ).val();
     // Set our own canvas styles
     context.fillStyle = 'white';
-    context.textAlign = 'left';
-    context.font = 'normal 10pt Helvetica';
-    // Create that credit
-    context.fillText( text, 45, 322 );
+    if ($( '#memeselect' ).is(':checked')) {
+      context.font = 'normal 10pt Helvetica';
+      context.textAlign = 'left';
+      context.fillText( text, 45, 322 );
+    } else {
+      context.font = 'normal 18pt Helvetica';
+      context.textAlign = 'right';
+      context.fillText( text, 710, 300 );
+    };
   }
 
   /**
@@ -267,6 +272,19 @@ MEME.SVG = ( function ( $ ) {
         x = (xCoord / 5) * textMaxWidth,
         y = 45;
     return [x, y]
+
+  /**
+   * Toggle quote vs. meme formatting
+   */
+  var handleQuoteselect = function() {
+    if ($( '#memeselect ').is(':checked')) {
+      $( '#headline' ).val("Headline goes here.");
+      $( '#credit' ).val("Source: ");
+    } else {
+      $( '#headline' ).val("Quote goes here. Use option-[ and shift-option-[ for curly quotation marks.");
+      $( '#credit' ).val("Name of author/speaker");
+    };
+    addCanvas();
   }
 
   /**
@@ -367,6 +385,7 @@ MEME.SVG = ( function ( $ ) {
     $( '.overlay' ).on( 'click', handleOverlay );
     $( '#fontsize' ).on( 'change', handleFontSize );
     $( '#alignment' ).on( 'change', handleAlignment );
+    $( '.quoteselect' ).on( 'click', handleQuoteselect );
   }
 
   /**
