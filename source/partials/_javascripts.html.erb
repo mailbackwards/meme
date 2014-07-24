@@ -18,6 +18,7 @@ MEME.SVG = ( function ( $ ) {
   var canvas       = document.getElementById( 'canvas' ),
       canvasHeight = 378,
       canvasWidth  = 755,
+      textOffset   = 200,
       deviceWidth  = window.innerWidth,
       context      = canvas.getContext( '2d' ),
       download     = document.getElementById( 'download' ),
@@ -29,7 +30,8 @@ MEME.SVG = ( function ( $ ) {
       lineHeight   = 28,
       alignment    = 'left',
       x            = canvas.width / 2 - img.width / 2,
-      y            = canvas.height / 2 - img.height / 2;
+      y            = canvas.height / 2 - img.height / 2,
+      creditSize   = 0.6;
 
 
   /**
@@ -185,11 +187,11 @@ MEME.SVG = ( function ( $ ) {
   var addHeadline = function () {
     // Create our own canvas values
     var text = $( '#headline' ).val(),
-        maxWidth = 550,
-        x = 45,
-        y = 45;
+        x = $( '#slider' ).val() * canvas.width,
+        y = 45,
+        maxWidth = canvas.width - textOffset - x;
     context.font = fontSize + ' ' + fontFamily;
-    context.textAlign = 'left';
+    context.textAlign = alignment;
     context.fillStyle = 'white';
     // Adds text shadow
     if ( $( '#shadow' ).prop( 'checked' )  ) {
@@ -198,16 +200,18 @@ MEME.SVG = ( function ( $ ) {
       context.shadowOffsetY = -2;
       context.shadowBlur    = 10;
     }
-    // Centers text
-    if ( alignment == 'center'  ) {
-      context.textAlign = 'center';
-      x = canvas.width / 2;
+    if ( alignment == 'right' ) {
+      maxWidth = x - textOffset
+    } else if ( alignment == 'center' ) {
       y = canvas.height - canvas.height / 1.5;
       maxWidth = canvas.width - canvas.width / 3;
-    } else if ( alignment == 'right' ) {
-      context.textAlign = 'right';
-      x = canvas.width - 40;
-    }
+      // Check x axis to see if it's spilling off the canvas
+      if (x + maxWidth / 2 > canvas.width) {
+        maxWidth = canvas.width - x 
+      } else if (x - maxWidth / 2 < 0) {
+        maxWidth = x 
+      }
+    };
     // Let's create that headline
     wrapText( context, text, x, y, maxWidth, lineHeight );
     // Reset the shadow
@@ -219,13 +223,16 @@ MEME.SVG = ( function ( $ ) {
    */
   var addCredit = function () {
     // Get credit
-    var text = $( '#credit' ).val();
+    var text = $( '#credit' ).val(),
+        x = $( '#creditslider' ).val() * canvas.width,
+        y = 322;
     // Set our own canvas styles
     context.fillStyle = 'white';
     context.textAlign = 'left';
-    context.font = 'normal 10pt Helvetica';
+    creditFont = (parseInt(fontSize.substr(0,2)) * creditSize).toString() + 'px'
+    context.font = 'normal ' + creditFont + ' ' + fontFamily;
     // Create that credit
-    context.fillText( text, 45, 322 );
+    context.fillText( text, x, y );
   }
 
   /**
@@ -248,6 +255,14 @@ MEME.SVG = ( function ( $ ) {
     }
     fontSize = fontSize;
     lineHeight = $( '#fontsize option:selected' ).data( 'height' );
+    addCanvas();
+  }
+
+  /**
+   * Change credit size based on slider location
+   */
+  var handleCreditSize = function () {
+    creditSize = $( '#creditsize' ).val();
     addCanvas();
   }
 
@@ -360,6 +375,15 @@ MEME.SVG = ( function ( $ ) {
     var scale = document.getElementById('scale');
     scale.addEventListener( 'change', addCanvas, false );
 
+    var slider = document.getElementById( 'slider' );
+    slider.addEventListener( 'change', addCanvas, false );
+
+    var creditSlider = document.getElementById( 'creditslider' );
+    creditSlider.addEventListener( 'change', addCanvas, false );
+
+    var creditSize = document.getElementById( 'creditsize' );
+    creditSize.addEventListener( 'change', addCanvas, false );
+
     var shadow = document.getElementById( 'shadow' );
     shadow.addEventListener( 'change', addCanvas, false );
 
@@ -374,6 +398,7 @@ MEME.SVG = ( function ( $ ) {
     $( '#fontfamily' ).on( 'change', handleFontFamily );
     $( '#fontfamily_freeform' ).on( 'change', { test: 'test' }, handleFontFamily );
     $( '#alignment' ).on( 'change', handleAlignment );
+    $( '#creditsize' ).on( 'change', handleCreditSize );
   }
 
   /**

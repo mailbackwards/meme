@@ -21,9 +21,19 @@
         <option value="Comic Sans MS">Comic Sans MS</option>
       </select>
       <input id="fontfamily_freeform" type="text" placeholder="Font family (free form)">
+      <label for="slider">X axis</label>
+      <input id="slider" type="range" min="0" max="1" step="0.01" value="0.06">
     </div>
     <label for="credit">Credit</label>
     <input id="credit" name="credit" type="text" value="Source: ">
+    <fieldset>
+      <label for="creditsize">Size</label>
+      <input id="creditsize" type="range" min="0" max="1" step="0.01" value="0.60">
+    </fieldset>
+    <fieldset>
+      <label for="creditslider">X Axis</label>
+      <input id="creditslider" type="range" min="0" max="1" step="0.01" value="0.06">
+    </fieldset>
     <fieldset>
       <label class="left" for="overlay">Overlay: </label>
       <div class="overlay overlay-black" data-color="black">x</div>
