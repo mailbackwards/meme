@@ -11,7 +11,8 @@ MEME.SVG = ( function ( $ ) {
       fontSizeDefault = '18pt',
       fontSizeLarge   = '24pt',
       fontSizeHuge    = '36pt',
-      fontFamilyDefault = 'Helvetica';
+      fontFamilyDefault = 'Helvetica',
+      fontWeightDefault = 'normal';
 
 
   // Variables
@@ -24,14 +25,15 @@ MEME.SVG = ( function ( $ ) {
       download     = document.getElementById( 'download' ),
       fontSize     = fontSizeDefault,
       fontFamily   = fontFamilyDefault,
+      fontWeight   = fontWeightDefault,
+      creditSize   = 0.6,
       img          = document.getElementById( 'image-storage' ),
       overlay      = true,
       overlayColor = 'blue',
       lineHeight   = 28,
       alignment    = 'left',
       x            = canvas.width / 2 - img.width / 2,
-      y            = canvas.height / 2 - img.height / 2,
-      creditSize   = 0.6;
+      y            = canvas.height / 2 - img.height / 2;
 
 
   /**
@@ -43,7 +45,7 @@ MEME.SVG = ( function ( $ ) {
     canvas.height = canvasHeight;
     // Set up context defaults
     context.textBaseline = 'top';
-    context.font         = 'normal ' + fontSizeDefault + ' ' + fontFamilyDefault;
+    context.font         = fontWeightDefault + ' ' + fontSizeDefault + ' ' + fontFamilyDefault;
     context.fillStyle    = 'white';
     // Add canvas
     context.drawImage( img, 0, 0 );
@@ -190,7 +192,7 @@ MEME.SVG = ( function ( $ ) {
         x = $( '#slider' ).val() * canvas.width,
         y = 45,
         maxWidth = canvas.width - textOffset - x;
-    context.font = fontSize + ' ' + fontFamily;
+    context.font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
     context.textAlign = alignment;
     context.fillStyle = 'white';
     // Adds text shadow
@@ -229,8 +231,8 @@ MEME.SVG = ( function ( $ ) {
     // Set our own canvas styles
     context.fillStyle = 'white';
     context.textAlign = 'left';
-    creditFont = (parseInt(fontSize.substr(0,2)) * creditSize).toString() + 'px'
-    context.font = 'normal ' + creditFont + ' ' + fontFamily;
+    creditFont = (parseInt(fontSize.substr(0,2)) * creditSize).toString() + 'pt'
+    context.font = fontWeight + ' ' + creditFont + ' ' + fontFamily;
     // Create that credit
     context.fillText( text, x, y );
   }
@@ -259,10 +261,24 @@ MEME.SVG = ( function ( $ ) {
   }
 
   /**
-   * Change credit size based on slider location
+   * Change credit size based on data attribute of option elements
    */
   var handleCreditSize = function () {
-    creditSize = $( '#creditsize' ).val();
+    var size = $( '#creditsize option:selected' ).val();
+    switch( size ) {
+      case 'smaller':
+          creditSize = 0.4;
+          break;
+      case 'bigger':
+          creditSize = 0.8;
+          break;
+      case 'huge':
+          creditSize = 1.0;
+          break;
+      default:
+          creditSize = 0.6;
+    }
+    creditSize = creditSize;
     addCanvas();
   }
 
@@ -283,6 +299,15 @@ MEME.SVG = ( function ( $ ) {
     fontFamily = family;
     addCanvas();
   }
+
+  /**
+   * Change font weight based on data attribute of checkbox elements
+   */
+  var handleFontWeight = function () {
+    fontWeight = $( '#fontweight' ).prop( 'checked' ) ? 'bold' : 'normal'
+    addCanvas();
+  }
+
 
   /**
    * Change headline alignment (left, right, center)
@@ -381,9 +406,6 @@ MEME.SVG = ( function ( $ ) {
     var creditSlider = document.getElementById( 'creditslider' );
     creditSlider.addEventListener( 'change', addCanvas, false );
 
-    var creditSize = document.getElementById( 'creditsize' );
-    creditSize.addEventListener( 'change', addCanvas, false );
-
     var shadow = document.getElementById( 'shadow' );
     shadow.addEventListener( 'change', addCanvas, false );
 
@@ -395,10 +417,11 @@ MEME.SVG = ( function ( $ ) {
 
     $( '.overlay' ).on( 'click', handleOverlay );
     $( '#fontsize' ).on( 'change', handleFontSize );
+    $( '#fontweight' ).on( 'change', handleFontWeight );
+    $( '#creditsize' ).on( 'change', handleCreditSize );
     $( '#fontfamily' ).on( 'change', handleFontFamily );
     $( '#fontfamily_freeform' ).on( 'change', { test: 'test' }, handleFontFamily );
     $( '#alignment' ).on( 'change', handleAlignment );
-    $( '#creditsize' ).on( 'change', handleCreditSize );
   }
 
   /**

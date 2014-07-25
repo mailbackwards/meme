@@ -21,14 +21,22 @@
         <option value="Comic Sans MS">Comic Sans MS</option>
       </select>
       <input id="fontfamily_freeform" type="text" placeholder="Font family (free form)">
-      <span class="slider-header">Location</span>
+      <input type="checkbox" id="fontweight" value="bold"><span class="small-label">Bold</span>
+      <br />
+      <span class="small-label">Location</span>
       <input id="slider" type="range" min="0" max="1" step="0.01" value="0.06">
     </div>
     <label for="credit">Credit</label>
     <input id="credit" name="credit" type="text" value="Source: ">
-    <span class="slider-header">Size</label>
+    <select id="creditsize">
+      <option value="smaller">smaller</option>
+      <option value="default" selected>default size</option>
+      <option value="bigger">bigger</option>
+      <option value="huge">huge</option>
+    </select>
+    <span class="small-label">Size</label>
     <input id="creditsize" type="range" min="0" max="1" step="0.01" value="0.60">
-    <span class="slider-header">Location</span>
+    <span class="small-label">Location</span>
     <input id="creditslider" type="range" min="0" max="1" step="0.01" value="0.06">
     <fieldset>
       <label class="left" for="overlay">Overlay: </label>
